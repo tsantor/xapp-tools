@@ -5,10 +5,14 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import click
 from rich.console import Console
+
+from xapp_tools.project_meta import resolve_package_metadata
 
 BADGE_PATTERN = re.compile(
     r"!\[Coverage\]\(https://img\.shields\.io/badge/coverage-[^)]+\)"
@@ -87,8 +91,29 @@ def update_readme(readme_path: Path, badge_markdown: str) -> bool:
 )
 def main(coverage_json: str, readme: str) -> None:
     """Update README coverage badge from coverage.py JSON output."""
+    # Get import package dir (e.g. xapp_tools) for --cov, not distribution name
+    _, package_dir, _ = resolve_package_metadata()
+
+    # Use absolute path for coverage.json
+    # coverage_path = Path(coverage_json).absolute()
+    # readme_path = Path(readme).absolute()
     coverage_path = Path(coverage_json)
     readme_path = Path(readme)
+
+    # Run pytest with coverage, specifying output file location
+    cmd = [
+        sys.executable,
+        "-m",
+        "pytest",
+        "-q",
+        f"--cov={package_dir}",
+        f"--cov-report=json:{coverage_path}",
+    ]
+    _out.print(f"[cyan]Running:[/cyan] {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        _out.print(f"[red]pytest failed:[/red]\n{result.stdout}\n{result.stderr}")
+        sys.exit(result.returncode)
 
     percent = parse_coverage_percent(coverage_path)
     badge = render_badge(percent)
@@ -100,6 +125,9 @@ def main(coverage_json: str, readme: str) -> None:
         _out.print(
             f"README coverage badge already up to date at [green]{percent}%[/green]"
         )
+
+    if coverage_path.exists():
+        coverage_path.unlink()
 
 
 if __name__ == "__main__":
