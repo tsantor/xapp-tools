@@ -1,0 +1,75 @@
+image: python:3.13
+
+options:
+  max-time: 30
+
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Quality Gates
+          caches:
+            - pip
+          script:
+            - pip install uv
+            - uv sync --no-default-groups --group dev --group test
+            - make release_check
+
+  branches:
+    master:
+      - step:
+          name: Quality Gates
+          caches:
+            - pip
+          script:
+            - pip install uv
+            - uv sync --no-default-groups --group dev --group test
+            - make release_check
+    main:
+      - step:
+          name: Quality Gates
+          caches:
+            - pip
+          script:
+            - pip install uv
+            - uv sync --no-default-groups --group dev --group test
+            - make release_check
+
+  tags:
+    'v*':
+      - step:
+          name: Release Gates + Build
+          caches:
+            - pip
+          script:
+            - pip install uv
+            - uv sync --no-default-groups --group dev --group test
+            - make release_check
+          artifacts:
+            - dist/**
+
+  custom:
+    coverage-badge:
+      - step:
+          name: Update Coverage Badge
+          caches:
+            - pip
+          script:
+            - pip install uv
+            - uv sync --no-default-groups --group dev --group test
+            - make coverage_badge
+            - |
+              if git diff --quiet -- README.md; then
+                echo "Coverage badge already up to date"
+                exit 0
+              fi
+            - git config user.name "bitbucket-pipelines"
+            - git config user.email "pipelines@local"
+            - git add README.md
+            - git commit -m "chore(readme): update coverage badge [skip ci]"
+            - |
+              if [ -z "${BB_USERNAME}" ] || [ -z "${BB_APP_PASSWORD}" ]; then
+                echo "Skipping push: set BB_USERNAME and BB_APP_PASSWORD repository variables"
+                exit 0
+              fi
+            - git push "https://${BB_USERNAME}:${BB_APP_PASSWORD}@bitbucket.org/${BITBUCKET_REPO_FULL_NAME}.git" "HEAD:${BITBUCKET_BRANCH}"
