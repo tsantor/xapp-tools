@@ -1,5 +1,5 @@
 [project]
-name = "xapp-core-tools"
+name = "xapp-tools"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
@@ -12,9 +12,11 @@ xapp-tools = "xapp_tools.cli:cli"
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.3",
-    "pytest-cov>=7.1.0",
-    "pytest-mock>=3.14.0",
+  "build>=1.4.3",
+  "pytest>=9.0.3",
+  "pytest-cov>=7.1.0",
+  "pytest-mock>=3.14.0",
+  "ruff>=0.15.11",
 ]
 
 [build-system]

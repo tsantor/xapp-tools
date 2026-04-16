@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# ruff: noqa: T201
 """Ensure no hardcoded __version__ string is defined in the package source.
 
 The version must be declared only in pyproject.toml. Runtime access is

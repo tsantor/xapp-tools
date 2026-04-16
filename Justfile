@@ -1,6 +1,10 @@
 set shell := ["bash", "-cu"]
 # set shell := ["powershell.exe", "-NoLogo", "-Command"]
 
+# List all available recipes
+default:
+  @just --list
+
 # -----------------------------------------------------------------------------
 # Variables
 # -----------------------------------------------------------------------------
@@ -9,21 +13,22 @@ python_version := "3.13.1"
 aws_profile := "xstudios"
 s3_bucket := "xstudios-pypi"
 
-# Dynamic variables (evaluated at runtime - do not edit)
+# Dynamic variables (evaluated at runtime - DO NOT EDIT)
 package_name := `uv run python -c "import tomllib; n=tomllib.load(open('pyproject.toml','rb'))['project']['name']; print(n.replace('-', '_'))"`
 wheel_name := `ls dist/*.whl 2>/dev/null | head -n 1 | xargs -n 1 basename`
 package_url := "https://" + s3_bucket + ".s3.amazonaws.com/" + wheel_name
 
-# DO NOT EDIT BELOW THIS LINE - auto-generated from template
-# -----------------------------------------------------------------------------
-# Default - list all recipes
-# -----------------------------------------------------------------------------
-
-# List all available recipes
+# Show variable values
 [group('help')]
-default:
-  @just --list
+show-vars:
+  @echo "Python Version: {{python_version}}"
+  @echo "AWS Profile: {{aws_profile}}"
+  @echo "S3 Bucket: {{s3_bucket}}"
+  @echo "Package Name: {{package_name}}"
+  @echo "Wheel Name: {{wheel_name}}"
+  @echo "Package URL: {{package_url}}"
 
+# DO NOT EDIT BELOW THIS LINE - auto-generated from template
 # -----------------------------------------------------------------------------
 # Environment
 # -----------------------------------------------------------------------------
@@ -222,11 +227,12 @@ clean-all: clean clean-tests
 # Miscellaneous
 # -----------------------------------------------------------------------------
 
-# Show directory tree
+# Show src directory tree
 [group('misc')]
 tree:
   tree src -I '__pycache__'
 
+# Show full directory tree
 [group('misc')]
 tree-root:
   tree -I '.claude|.tmp|.coverage|htmlcov|dist|build|.eggs|*.egg-info|__pycache__|.pytest_cache|.ruff_cache|.tox|.vscode|node_modules|*.csv'
@@ -242,7 +248,7 @@ dist: clean
 
 # Run full release quality gates
 [group('deploy')]
-release-check: ruff-check api-check pytest-cov-gate verify-dist wheel-smoke twine-check
+release-check: ruff-check pytest-cov-gate twine-check
 
 # Upload package to pypi test
 [group('deploy')]

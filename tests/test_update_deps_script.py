@@ -1,16 +1,15 @@
 import pytest
 
-import xapp_tools.update_deps as _update_deps_module
-from xapp_tools.update_deps import build_uv_commands, extract_package_name, run_uv
+from xapp_tools.update_deps import build_uv_commands
+from xapp_tools.update_deps import extract_package_name
+from xapp_tools.update_deps import run_uv
 
 
 def test_extract_package_name_variants():
     assert extract_package_name("click>=8.3.2") == "click"
     assert extract_package_name("pytest-cov==7.0.0") == "pytest-cov"
     assert extract_package_name("requests[socks]>=2.0") == "requests"
-    assert (
-        extract_package_name("pkg @ git+https://example.com/repo.git") == "pkg"
-    )
+    assert extract_package_name("pkg @ git+https://example.com/repo.git") == "pkg"
 
 
 def test_build_uv_commands_dynamic_groups():

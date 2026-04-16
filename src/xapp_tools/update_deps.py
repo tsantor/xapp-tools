@@ -13,12 +13,11 @@ import click
 from rich.console import Console
 
 try:
-    from xapp_tools.project_meta import load_pyproject_config, resolve_package_metadata
+    from xapp_tools.project_meta import load_pyproject_config
+    from xapp_tools.project_meta import resolve_package_metadata
 except ModuleNotFoundError:
-    from project_meta import (
-        load_pyproject_config,  # type: ignore[no-redef]
-        resolve_package_metadata,  # type: ignore[no-redef]
-    )
+    from project_meta import load_pyproject_config  # type: ignore[no-redef]
+    from project_meta import resolve_package_metadata  # type: ignore[no-redef]
 
 _out = Console()
 _err = Console(stderr=True)

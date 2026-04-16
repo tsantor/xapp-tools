@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from xapp_tools.project_meta import load_pyproject_config, resolve_package_metadata
+from xapp_tools.project_meta import load_pyproject_config
+from xapp_tools.project_meta import resolve_package_metadata
 
 
 def _write_pyproject(path: Path, text: str) -> Path:
