@@ -9,11 +9,11 @@ import sys
 from pathlib import Path
 
 import click
-from rich.console import Console
 
+from xapp_tools.console import print_error
+from xapp_tools.console import print_info
+from xapp_tools.console import print_success
 from xapp_tools.project_meta import resolve_package_metadata
-
-_out = Console()
 
 
 def run(cmd: list[str]) -> None:
@@ -32,48 +32,12 @@ def newest_wheel(dist_dir: Path) -> Path:
 
 
 @click.command("wheel-smoke")
-@click.option(
-    "--dist-dir",
-    default="dist",
-    show_default=True,
-    help="Directory containing wheels.",
-)
-@click.option(
-    "--venv-dir",
-    default=".tmp/release-wheel-smoke",
-    show_default=True,
-    help="Temporary venv path.",
-)
-@click.option(
-    "--package-name",
-    default=None,
-    help="Distribution name override (defaults to project.name in pyproject.toml).",
-)
-@click.option(
-    "--package-dir",
-    default=None,
-    help="Import package override (defaults to Hatch wheel package path).",
-)
-@click.option(
-    "--package-version",
-    default=None,
-    help="Package version override (defaults to project.version in pyproject.toml).",
-)
-def main(
-    dist_dir: str,
-    venv_dir: str,
-    package_name: str | None,
-    package_dir: str | None,
-    package_version: str | None,
-) -> None:
+def main() -> None:
     """Install built wheel in a clean venv and verify the package imports."""
-    dist = Path(dist_dir)
-    venv = Path(venv_dir)
-    _, pkg_dir, _ = resolve_package_metadata(
-        package_name_override=package_name,
-        package_dir_override=package_dir,
-        package_version_override=package_version,
-    )
+    dist = Path("dist")
+    venv = Path(".tmp/release-wheel-smoke")
+
+    pkg_name, pkg_dir, _ = resolve_package_metadata()
 
     wheel = newest_wheel(dist)
 
@@ -96,10 +60,10 @@ def main(
         [
             str(python_bin),
             "-c",
-            f"from importlib.metadata import version; print(version('{package_name or pkg_dir}'))",
+            f"from importlib.metadata import version; print(version('{pkg_name or pkg_dir}'))",
         ]
     )
-    _out.print(f"[green]Wheel smoke test passed:[/green] {wheel.name}")
+    print_success(f"Wheel smoke test passed: {wheel.name}")
 
 
 if __name__ == "__main__":

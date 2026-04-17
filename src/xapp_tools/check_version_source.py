@@ -44,12 +44,12 @@ def main(src_dir: str) -> None:
     src = Path(src_dir)
 
     if not src.is_dir():
-        _err.print(f"[red]Error:[/red] source directory not found: {src}")
+        _err.print(f"Error: source directory not found: {src}")
         sys.exit(2)
 
     violations = check_src(src)
     if violations:
-        _err.print("[red]Error:[/red] hardcoded __version__ found in package source:")
+        _err.print("Error: hardcoded __version__ found in package source:")
         for v in violations:
             _err.print(f"  [yellow]{v}[/yellow]")
         _err.print("[dim]Version must be declared only in pyproject.toml.[/dim]")

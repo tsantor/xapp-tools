@@ -55,12 +55,12 @@ def main(create: bool) -> None:
         print_success(f"Contract updated: {contract_file}")
     else:
         if not contract_file.exists():
-            print_error(f"[red]Contract file not found:[/red] {contract_file}")
+            print_error(f"Contract file not found: {contract_file}")
             sys.exit(1)
         contract_text = contract_file.read_text()
         if snapshot_text != contract_text:
             print_error(
-                "[red]Public API has changed.[/red] "
+                "Public API has changed. "
                 "Run [bold]just api-snapshot[/bold] to update the contract."
             )
             print_error(f"\nContract ({contract_file}):\n{contract_text}")

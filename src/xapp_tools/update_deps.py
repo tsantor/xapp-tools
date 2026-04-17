@@ -10,13 +10,12 @@ import subprocess
 from pathlib import Path
 
 import click
-from rich.console import Console
 
+from xapp_tools.console import print_error
+from xapp_tools.console import print_info
+from xapp_tools.console import print_success
 from xapp_tools.project_meta import load_pyproject_config
 from xapp_tools.project_meta import resolve_package_metadata
-
-_out = Console()
-_err = Console(stderr=True)
 
 
 def extract_package_name(dependency: str) -> str:
@@ -61,7 +60,7 @@ def build_uv_commands(
 
 def run_uv(cmd: list[str], dry_run: bool) -> int:
     """Run a uv command; return process returncode."""
-    _out.print(f"[dim]$ {' '.join(cmd)}[/dim]")
+    print_info(" ".join(cmd))
     if dry_run:
         return 0
     # Command is generated internally from pyproject dependencies.
@@ -102,7 +101,7 @@ def main(
         package_dir_override=package_dir,
         pyproject_path=pyproject_path,
     )
-    _out.print(
+    print_info(
         f"Resolved project metadata: name=[bold]{package_name_val}[/bold], "
         f"package=[bold]{package_dir_val}[/bold]"
     )
@@ -110,7 +109,7 @@ def main(
     cfg = load_pyproject_config(pyproject_path)
     command_specs = build_uv_commands(cfg)
     if not command_specs:
-        _out.print("No dependencies found to update.")
+        print_info("No dependencies found to update.")
         return
 
     failures: list[str] = []
@@ -122,15 +121,15 @@ def main(
             failures.append(f"{scope}:{package}: add failed")
 
     mode = "dry-run" if dry_run else "executed"
-    _out.print(f"Processed [bold]{len(command_specs)}[/bold] dependencies ({mode}).")
+    print_info(f"Processed [bold]{len(command_specs)}[/bold] dependencies ({mode}).")
 
     if failures:
-        _err.print("[red]Failures:[/red]")
+        print_error("Failures:")
         for item in failures:
-            _err.print(f"  [red]- {item}[/red]")
+            print_error(f"  - {item}")
         raise SystemExit(1)
 
-    _out.print("[green]Dependency refresh completed successfully.[/green]")
+    print_info("Dependency refresh completed successfully.")
 
 
 if __name__ == "__main__":

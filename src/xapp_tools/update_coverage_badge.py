@@ -113,7 +113,7 @@ def main(coverage_json: str, readme: str) -> None:
     print_info(f"[cyan]Running:[/cyan] {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510, S603
     if result.returncode != 0:
-        print_error(f"[red]pytest failed:[/red]\n{result.stdout}\n{result.stderr}")
+        print_error(f"pytest failed:\n{result.stdout}\n{result.stderr}")
         sys.exit(result.returncode)
 
     percent = parse_coverage_percent(coverage_path)
@@ -121,11 +121,9 @@ def main(coverage_json: str, readme: str) -> None:
     changed = update_readme(readme_path, badge)
 
     if changed:
-        print_success(f"Updated README coverage badge to [green]{percent}%[/green]")
+        print_success(f"Updated README coverage badge to {percent}%")
     else:
-        print_success(
-            f"README coverage badge already up to date at [green]{percent}%[/green]"
-        )
+        print_success(f"README coverage badge already up to date at {percent}%")
 
     if coverage_path.exists():
         coverage_path.unlink()
