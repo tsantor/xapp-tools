@@ -70,6 +70,7 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
             except KeyError:
                 failures[module] = symbols
                 continue
+
             missing = [s for s in symbols if s not in content]
             if missing:
                 failures[module] = missing
@@ -79,18 +80,11 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
         for mod, missing in failures.items():
             print_error(f"{mod}: missing symbols ({', '.join(missing)})")
         sys.exit(1)
+    print_success("Verified wheel api contract symbols")
 
 
 @click.command("verify-dist")
-@click.option(
-    "--contract-file",
-    default=None,
-    type=click.Path(path_type=Path),
-    help="Path to a JSON contract file for symbol verification.",
-)
-def main(
-    contract_file: Path | None,
-) -> None:
+def main() -> None:
     """Verify wheel and sdist build artifacts."""
     dist = Path("dist")
     pkg_name, pkg_dir, pkg_version = resolve_package_metadata()
@@ -101,8 +95,7 @@ def main(
     sdist_path = _latest_artifact("*.tar.gz", dist)
     _verify_wheel(wheel_path, pkg_name, pkg_dir, pkg_version)
     _verify_sdist(sdist_path, pkg_dir)
-    if contract_file:
-        _verify_contract(wheel_path, contract_file)
+    _verify_contract(wheel_path, Path("api/public_api.contract.json"))
 
 
 if __name__ == "__main__":

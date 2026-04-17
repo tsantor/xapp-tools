@@ -10,8 +10,6 @@ from pathlib import Path
 
 import click
 
-from xapp_tools.console import print_error
-from xapp_tools.console import print_info
 from xapp_tools.console import print_success
 from xapp_tools.project_meta import resolve_package_metadata
 
