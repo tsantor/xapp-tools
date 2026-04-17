@@ -40,10 +40,10 @@ test = [
 
 [project.urls]
 # Homepage = "https://xstudios.com"
-# Documentation = "https://readthedocs.org/xapp-core"
-Repository = "https://bitbucket.org/xstudios/xapp-core-tools.git"
-Issues = "https://bitbucket.org/xstudios/xapp-core-tools/issues"
-Changelog = "https://bitbucket.org/xstudios/xapp-core-tools/blob/master/HISTORY.md"
+# Documentation = "https://readthedocs.org/xapp-tools"
+Repository = "https://bitbucket.org/xstudios/xapp-tools.git"
+Issues = "https://bitbucket.org/xstudios/xapp-tools/issues"
+Changelog = "https://bitbucket.org/xstudios/xapp-tools/src/master/HISTORY.md"
 
 [build-system]
 requires = ["hatchling"]
