@@ -82,7 +82,9 @@ def _run_verify() -> object:
     return runner.invoke(cli, ["verify-dist"], catch_exceptions=False)
 
 
-def test_verify_dist_artifacts_passes_with_contract(tmp_path: Path, monkeypatch) -> None:
+def test_verify_dist_artifacts_passes_with_contract(
+    tmp_path: Path, monkeypatch
+) -> None:
     monkeypatch.chdir(tmp_path)
     _setup_project(tmp_path)
     _write_wheel(tmp_path / "dist")
@@ -94,12 +96,16 @@ def test_verify_dist_artifacts_passes_with_contract(tmp_path: Path, monkeypatch)
     assert result.exit_code == 0
 
 
-def test_verify_dist_artifacts_fails_for_missing_symbol(tmp_path: Path, monkeypatch) -> None:
+def test_verify_dist_artifacts_fails_for_missing_symbol(
+    tmp_path: Path, monkeypatch
+) -> None:
     monkeypatch.chdir(tmp_path)
     _setup_project(tmp_path)
     _write_wheel(tmp_path / "dist")
     _write_sdist(tmp_path / "dist")
-    _write_contract(tmp_path / "api" / "public_api.contract.json", ["CoreApp", "MissingSymbol"])
+    _write_contract(
+        tmp_path / "api" / "public_api.contract.json", ["CoreApp", "MissingSymbol"]
+    )
 
     result = _run_verify()
 
@@ -108,7 +114,9 @@ def test_verify_dist_artifacts_fails_for_missing_symbol(tmp_path: Path, monkeypa
     assert "xapp_core.app: missing symbols (MissingSymbol)" in result.output
 
 
-def test_verify_dist_artifacts_fails_for_invalid_contract(tmp_path: Path, monkeypatch) -> None:
+def test_verify_dist_artifacts_fails_for_invalid_contract(
+    tmp_path: Path, monkeypatch
+) -> None:
     monkeypatch.chdir(tmp_path)
     _setup_project(tmp_path)
     _write_wheel(tmp_path / "dist")

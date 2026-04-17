@@ -178,6 +178,35 @@ ruff-clean:
   uv run ruff clean
 
 # -----------------------------------------------------------------------------
+# Workflow
+# -----------------------------------------------------------------------------
+
+# Run fast local quality checks
+[group('workflow')]
+check: uv-lock-check ruff-check pytest-cov-gate
+
+# Apply automatic fixes and re-run checks
+[group('workflow')]
+fix: ruff-format ruff-check-fix check
+
+# Mirror CI/release gate locally
+[group('workflow')]
+ci: release-check
+
+# Show toolchain and environment diagnostics
+[group('workflow')]
+doctor:
+  uv --version
+  uv run python --version
+  uv pip list --strict
+  uv lock --check
+
+# Show outdated dependencies across all groups
+[group('workflow')]
+outdated:
+  uv tree --outdated --all-groups
+
+# -----------------------------------------------------------------------------
 # Cleanup
 # -----------------------------------------------------------------------------
 
