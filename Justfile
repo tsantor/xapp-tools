@@ -311,3 +311,60 @@ push-to-s3:
 # -----------------------------------------------------------------------------
 # Project Specific
 # -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Versioning
+# -----------------------------------------------------------------------------
+
+# Show current package version
+[group('versioning')]
+version-show:
+  @uv run python -c "import tomllib, pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])"
+
+# Set explicit version (strict SemVer: X.Y.Z)
+[group('versioning')]
+version-set new_version:
+  @uv run python -c "import pathlib, re, sys; v='{{new_version}}'; p=pathlib.Path('pyproject.toml'); t=p.read_text(encoding='utf-8'); assert re.fullmatch(r'\\d+\\.\\d+\\.\\d+', v), f'Invalid version: {v}. Use X.Y.Z'; n,c=re.subn(r'^(version\\s*=\\s*\")[^\"]+(\")','\\\\g<1>'+v+'\\\\g<2>',t,count=1,flags=re.MULTILINE); assert c==1, 'Could not update version in pyproject.toml'; p.write_text(n, encoding='utf-8'); print(v)"
+
+# Bump patch version (X.Y.Z -> X.Y.Z+1)
+[group('versioning')]
+version-bump-patch:
+  @uv run python -c "import pathlib, re, tomllib; p=pathlib.Path('pyproject.toml'); t=p.read_text(encoding='utf-8'); v=tomllib.loads(t)['project']['version']; parts=v.split('.'); assert len(parts)==3 and all(x.isdigit() for x in parts); nv=parts[0]+'.'+parts[1]+'.'+str(int(parts[2])+1); n,c=re.subn(r'^(version\\s*=\\s*\")[^\"]+(\")','\\\\g<1>'+nv+'\\\\g<2>',t,count=1,flags=re.MULTILINE); assert c==1,'Could not update version'; p.write_text(n,encoding='utf-8'); print(nv)"
+
+# Bump minor version (X.Y.Z -> X.Y+1.0)
+[group('versioning')]
+version-bump-minor:
+  @uv run python -c "import pathlib, re, tomllib; p=pathlib.Path('pyproject.toml'); t=p.read_text(encoding='utf-8'); v=tomllib.loads(t)['project']['version']; parts=v.split('.'); assert len(parts)==3 and all(x.isdigit() for x in parts); nv=parts[0]+'.'+str(int(parts[1])+1)+'.0'; n,c=re.subn(r'^(version\\s*=\\s*\")[^\"]+(\")','\\\\g<1>'+nv+'\\\\g<2>',t,count=1,flags=re.MULTILINE); assert c==1,'Could not update version'; p.write_text(n,encoding='utf-8'); print(nv)"
+
+# Bump major version (X.Y.Z -> X+1.0.0)
+[group('versioning')]
+version-bump-major:
+  @uv run python -c "import pathlib, re, tomllib; p=pathlib.Path('pyproject.toml'); t=p.read_text(encoding='utf-8'); v=tomllib.loads(t)['project']['version']; parts=v.split('.'); assert len(parts)==3 and all(x.isdigit() for x in parts); nv=str(int(parts[0])+1)+'.0.0'; n,c=re.subn(r'^(version\\s*=\\s*\")[^\"]+(\")','\\\\g<1>'+nv+'\\\\g<2>',t,count=1,flags=re.MULTILINE); assert c==1,'Could not update version'; p.write_text(n,encoding='utf-8'); print(nv)"
+
+# Validate a bumped version with full quality gates
+[group('versioning')]
+version-verify: ci
+
+# Print suggested git tag for current version
+[group('versioning')]
+version-tag-dryrun:
+  @uv run python -c "import tomllib, pathlib; print('v'+tomllib.loads(pathlib.Path('pyproject.toml').read_text(encoding='utf-8'))['project']['version'])"
+
+# Create local annotated git tag for current version
+[group('versioning')]
+version-tag:
+  @test -z "$$(git status --porcelain)" || { echo "Working tree is not clean. Commit or stash changes before tagging."; exit 1; }
+  @tag=$$(just version-tag-dryrun); \
+  [[ "$$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$$ ]] || { echo "Invalid tag format: $$tag"; exit 1; }; \
+  git rev-parse "$$tag" >/dev/null 2>&1 && { echo "Tag already exists: $$tag"; exit 1; } || true; \
+  git tag -a "$$tag" -m "Release $$tag"; \
+  echo "Created tag $$tag"
+
+# Push current version tag to origin
+[group('versioning')]
+version-tag-push:
+  @test -z "$$(git status --porcelain)" || { echo "Working tree is not clean. Commit or stash changes before pushing tags."; exit 1; }
+  @tag=$$(just version-tag-dryrun); \
+  [[ "$$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$$ ]] || { echo "Invalid tag format: $$tag"; exit 1; }; \
+  git rev-parse "$$tag" >/dev/null 2>&1 || { echo "Tag does not exist locally: $$tag. Run 'just version-tag' first."; exit 1; }; \
+  git push origin "$$tag"

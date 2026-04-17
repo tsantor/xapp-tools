@@ -1,7 +1,7 @@
 [project]
 name = "xapp-tools"
 description = "A collection of tools for working with xapp-core packages."
-version = "0.1.0"
+version = "0.2.0"
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.11"
 authors = [
@@ -37,6 +37,9 @@ test = [
   "pytest-cov>=7.0.0",
   "pytest-mock>=3.0.0",
 ]
+
+[project.entry-points."hatch.metadata.hook"]
+combined-readme = "xapp_tools.hatch.readme_hook:CombinedReadmeMetadataHook"
 
 [project.urls]
 # Homepage = "https://xstudios.com"
