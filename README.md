@@ -9,7 +9,7 @@ Its role is to provide automation that is broadly useful across repositories, no
 
 ## Usage
 
-```
+```bash
 uv add xapp-tools --dev
 xapp-tools --help
 ```
@@ -19,7 +19,7 @@ Available commands:
 - `api-snapshot` — capture a public API snapshot
 - `check-version-source` — ensure no hardcoded `__version__` in package source
 - `coverage-badge` — update the coverage badge in README
-- `update-deps` — refresh all dependencies to their latest versions via uv
+- `update-deps` — refresh all dependencies to their latest versions via `uv`
 - `verify-dist` — verify wheel and sdist build artifacts
 - `wheel-smoke` — smoke-test an installed wheel
 
@@ -42,10 +42,5 @@ Allowed examples:
 Not allowed examples:
 
 - Application/domain business logic
-- Project feature commands (for example stock/portfolio behavior)
+- Project feature commands
 - One-off scripts tightly coupled to a specific app's runtime behavior
-
-## Tests
-
-Tests live under `tests/`.
-Keep these tests separate from app-level test suites so tool behavior remains portable and easy to reuse across projects.
