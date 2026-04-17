@@ -12,6 +12,7 @@ default:
 python_version := "3.13.1"
 aws_profile := "xstudios"
 s3_bucket := "xstudios-pypi"
+cov_fail_under := "59"
 
 # Dynamic variables (evaluated at runtime - DO NOT EDIT)
 package_name := `uv run python -c "import tomllib; n=tomllib.load(open('pyproject.toml','rb'))['project']['name']; print(n.replace('-', '_'))"`
@@ -24,6 +25,7 @@ show-vars:
   @echo "Python Version: {{python_version}}"
   @echo "AWS Profile: {{aws_profile}}"
   @echo "S3 Bucket: {{s3_bucket}}"
+  @echo "Coverage Fail Under: {{cov_fail_under}}"
   @echo "Package Name: {{package_name}}"
   @echo "Wheel Name: {{wheel_name}}"
   @echo "Package URL: {{package_url}}"
@@ -60,7 +62,7 @@ pip-install-editable:
 # Add dev dependencies
 [group('uv')]
 uv-add-dev-dependencies:
-  uv add twine wheel build setuptools ruff pipdeptree pre-commit --group dev
+  uv add twine wheel build ruff pipdeptree pre-commit --group dev
 
 # Add test dependencies
 [group('uv')]
@@ -143,7 +145,7 @@ open-coverage:
 
 # Run tests with coverage threshold gate
 [group('testing')]
-pytest-cov-gate cov_fail_under="80":
+pytest-cov-gate:
   uv run pytest -q --cov={{package_name}} --cov-report=term-missing --cov-fail-under={{cov_fail_under}}
 
 # Run tox

@@ -13,7 +13,7 @@ pipelines:
           script:
             - pip install uv
             - uv sync --no-default-groups --group dev --group test
-            - make release_check
+            - just release-check
 
   branches:
     master:
@@ -24,7 +24,7 @@ pipelines:
           script:
             - pip install uv
             - uv sync --no-default-groups --group dev --group test
-            - make release_check
+            - just release-check
     main:
       - step:
           name: Quality Gates
@@ -33,7 +33,7 @@ pipelines:
           script:
             - pip install uv
             - uv sync --no-default-groups --group dev --group test
-            - make release_check
+            - just release-check
 
   tags:
     'v*':
@@ -44,7 +44,7 @@ pipelines:
           script:
             - pip install uv
             - uv sync --no-default-groups --group dev --group test
-            - make release_check
+            - just release-check
           artifacts:
             - dist/**
 
