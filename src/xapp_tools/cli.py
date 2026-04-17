@@ -2,18 +2,18 @@ import importlib.metadata
 
 import click
 
-from xapp_tools.check_version_source import main as check_version_source_cmd
-from xapp_tools.public_api_snapshot import main as api_snapshot_cmd
+from xapp_tools.distro.public_api_snapshot import main as api_snapshot_cmd
+from xapp_tools.distro.verify_dist_artifacts import main as verify_dist_cmd
+from xapp_tools.distro.wheel_smoke_test import main as wheel_smoke_cmd
 from xapp_tools.update_coverage_badge import main as coverage_badge_cmd
 from xapp_tools.update_deps import main as update_deps_cmd
-from xapp_tools.verify_dist_artifacts import main as verify_dist_cmd
-from xapp_tools.version_bump import main as bump_cmd
-from xapp_tools.version_bump import set_version as set_version_cmd
-from xapp_tools.version_bump import show as show_cmd
-from xapp_tools.version_tag import create as tag_create_cmd
-from xapp_tools.version_tag import dryrun as tag_dryrun_cmd
-from xapp_tools.version_tag import push as tag_push_cmd
-from xapp_tools.wheel_smoke_test import main as wheel_smoke_cmd
+from xapp_tools.version.check_version_source import main as check_version_source_cmd
+from xapp_tools.version.version_bump import main as bump_cmd
+from xapp_tools.version.version_bump import set_version as set_version_cmd
+from xapp_tools.version.version_bump import show as show_cmd
+from xapp_tools.version.version_tag import create as tag_create_cmd
+from xapp_tools.version.version_tag import dryrun as tag_dryrun_cmd
+from xapp_tools.version.version_tag import push as tag_push_cmd
 
 
 @click.group()

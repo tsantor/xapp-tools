@@ -13,13 +13,13 @@ import sys
 from pathlib import Path
 
 import click
-from rich.console import Console
+
+from xapp_tools.console import print_error
+from xapp_tools.console import print_success
 
 # Matches __version__ = "1.0.2" or __version__ = '2.0.0a1' etc.
 # Does NOT match __version__ = version(...) or __version__ = "unknown".
 _HARDCODED_VERSION = re.compile(r'^\s*__version__\s*=\s*["\'](\d[^"\']*)["\']')
-
-_err = Console(stderr=True)
 
 
 def check_src(src_dir: Path) -> list[str]:
@@ -44,18 +44,18 @@ def main(src_dir: str) -> None:
     src = Path(src_dir)
 
     if not src.is_dir():
-        _err.print(f"Error: source directory not found: {src}")
+        print_error(f"Error: source directory not found: {src}")
         sys.exit(2)
 
     violations = check_src(src)
     if violations:
-        _err.print("Error: hardcoded __version__ found in package source:")
+        print_error("Error: hardcoded __version__ found in package source:")
         for v in violations:
-            _err.print(f"  [yellow]{v}[/yellow]")
-        _err.print("[dim]Version must be declared only in pyproject.toml.[/dim]")
+            print_error(f"  [yellow]{v}[/yellow]")
+        print_error("[dim]Version must be declared only in pyproject.toml.[/dim]")
         sys.exit(1)
 
-    click.echo(f"OK: no hardcoded __version__ in {src}/")
+    print_success(f"OK: no hardcoded __version__ in {src}/")
 
 
 if __name__ == "__main__":

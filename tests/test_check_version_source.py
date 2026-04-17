@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from xapp_tools.check_version_source import check_src
+from xapp_tools.version.check_version_source import check_src
 
 
 def _write(path: Path, content: str) -> None:
