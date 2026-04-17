@@ -1,6 +1,6 @@
 # xapp-tools
 
-![Coverage](https://img.shields.io/badge/coverage-59.69%25-orange)
+![Coverage](https://img.shields.io/badge/coverage-66.43%25-yellow)
 
 ## Purpose
 

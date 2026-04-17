@@ -79,7 +79,7 @@ class _BytesReader:
 
 def _run_verify() -> object:
     runner = CliRunner()
-    return runner.invoke(cli, ["verify-dist"], catch_exceptions=False)
+    return runner.invoke(cli, ["dist", "verify"], catch_exceptions=False)
 
 
 def test_verify_dist_artifacts_passes_with_contract(
