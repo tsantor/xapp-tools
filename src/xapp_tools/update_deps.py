@@ -13,7 +13,6 @@ import click
 
 from xapp_tools.console import print_error
 from xapp_tools.console import print_info
-from xapp_tools.console import print_success
 from xapp_tools.project_meta import load_pyproject_config
 from xapp_tools.project_meta import resolve_package_metadata
 
@@ -70,12 +69,6 @@ def run_uv(cmd: list[str], dry_run: bool) -> int:
 
 @click.command("update-deps")
 @click.option(
-    "--pyproject",
-    default="pyproject.toml",
-    show_default=True,
-    help="Path to pyproject.toml.",
-)
-@click.option(
     "--dry-run",
     is_flag=True,
     help="Print uv commands without executing them.",
@@ -90,11 +83,9 @@ def run_uv(cmd: list[str], dry_run: bool) -> int:
     default=None,
     help="Optional import package override for metadata validation.",
 )
-def main(
-    pyproject: str, dry_run: bool, package_name: str | None, package_dir: str | None
-) -> None:
+def main(dry_run: bool, package_name: str | None, package_dir: str | None) -> None:
     """Refresh all dependencies in pyproject.toml to their latest versions."""
-    pyproject_path = Path(pyproject)
+    pyproject_path = Path("pyproject.toml")
 
     package_name_val, package_dir_val, _ = resolve_package_metadata(
         package_name_override=package_name,

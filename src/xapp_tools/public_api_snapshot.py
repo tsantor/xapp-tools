@@ -38,7 +38,7 @@ def build_snapshot(package_name: str) -> dict:
     help="Create the public API contract instead of verifying it.",
 )
 def main(create: bool) -> None:
-    """Generate or verify the package's public API contract."""
+    """Create/verify the package's public API contract."""
     _, package, _ = resolve_package_metadata()
     snapshot = build_snapshot(package)
     snapshot_text = json.dumps(snapshot, indent=2) + "\n"

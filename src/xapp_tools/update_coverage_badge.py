@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 
 import click
-from rich.console import Console
 
 from xapp_tools.console import print_error
 from xapp_tools.console import print_info
@@ -91,7 +90,7 @@ def update_readme(readme_path: Path, badge_markdown: str) -> bool:
     help="Path to README file containing coverage badge.",
 )
 def main(coverage_json: str, readme: str) -> None:
-    """Update README coverage badge from coverage.py JSON output."""
+    """Update README coverage badge."""
     # Get import package dir (e.g. xapp_tools) for --cov, not distribution name
     _, package_dir, _ = resolve_package_metadata()
 

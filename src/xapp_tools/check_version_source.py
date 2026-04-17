@@ -40,7 +40,7 @@ def check_src(src_dir: Path) -> list[str]:
     help="Package source directory to scan.",
 )
 def main(src_dir: str) -> None:
-    """Ensure no hardcoded __version__ string is defined in package source."""
+    """Ensure no hardcoded __version__ in package."""
     src = Path(src_dir)
 
     if not src.is_dir():
