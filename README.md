@@ -1,10 +1,10 @@
 # xapp-tools
 
-![Coverage](https://img.shields.io/badge/coverage-60.0%25-yellow)
+![Coverage](https://img.shields.io/badge/coverage-59.69%25-orange)
 
 ## Purpose
 
-`xapp-tools` is an installable package of reusable build and development tooling for Python projects.
+`xapp-tools` is an installable package of reusable build and development tooling for Xapp-based Python projects.
 Its role is to provide automation that is broadly useful across repositories, not app-specific behavior.
 
 ## Usage
