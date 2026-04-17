@@ -11,11 +11,11 @@ from email import message_from_string
 from pathlib import Path
 
 import click
-from rich.console import Console
 
+from xapp_tools.console import print_error
+from xapp_tools.console import print_info
+from xapp_tools.console import print_success
 from xapp_tools.project_meta import resolve_package_metadata
-
-_err = Console(stderr=True)
 
 
 def _latest_artifact(pattern: str, dist_dir: Path) -> Path:
@@ -40,6 +40,7 @@ def _verify_wheel(
         metadata = message_from_string(wheel.read(metadata_name).decode("utf-8"))
         assert metadata["Name"] == package_name
         assert metadata["Version"] == package_version
+        print_success(f"Verified wheel contents and metadata: {wheel_path.name}")
 
 
 def _verify_sdist(sdist_path: Path, package_dir: str) -> None:
@@ -47,6 +48,7 @@ def _verify_sdist(sdist_path: Path, package_dir: str) -> None:
         names = set(sdist.getnames())
         assert any(name.endswith(f"src/{package_dir}/__init__.py") for name in names)
         assert any(name.endswith("pyproject.toml") for name in names)
+        print_success(f"Verified sdist contents: {sdist_path.name}")
 
 
 def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
@@ -56,7 +58,7 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
     invalid = [mod for mod, syms in modules.items() if not syms]
     if invalid:
         for mod in invalid:
-            _err.print(f"Invalid symbol list for contract module '{mod}'")
+            print_error(f"Invalid symbol list for contract module '{mod}'")
         sys.exit(1)
 
     failures: dict[str, list[str]] = {}
@@ -73,34 +75,13 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
                 failures[module] = missing
 
     if failures:
-        _err.print("Wheel contract symbol verification failed")
+        print_error("Wheel contract symbol verification failed")
         for mod, missing in failures.items():
-            _err.print(f"{mod}: missing symbols ({', '.join(missing)})")
+            print_error(f"{mod}: missing symbols ({', '.join(missing)})")
         sys.exit(1)
 
 
 @click.command("verify-dist")
-@click.option(
-    "--package-name",
-    default=None,
-    help="Distribution name override (defaults to project.name in pyproject.toml).",
-)
-@click.option(
-    "--package-dir",
-    default=None,
-    help="Import package override (defaults to Hatch wheel package path).",
-)
-@click.option(
-    "--package-version",
-    default=None,
-    help="Version override (defaults to project.version in pyproject.toml).",
-)
-@click.option(
-    "--dist-dir",
-    default="dist",
-    show_default=True,
-    help="Directory containing built artifacts.",
-)
 @click.option(
     "--contract-file",
     default=None,
@@ -108,18 +89,13 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
     help="Path to a JSON contract file for symbol verification.",
 )
 def main(
-    package_name: str | None,
-    package_dir: str | None,
-    package_version: str | None,
-    dist_dir: str,
     contract_file: Path | None,
 ) -> None:
     """Verify wheel and sdist build artifacts."""
-    dist = Path(dist_dir)
-    pkg_name, pkg_dir, pkg_version = resolve_package_metadata(
-        package_name_override=package_name,
-        package_dir_override=package_dir,
-        package_version_override=package_version,
+    dist = Path("dist")
+    pkg_name, pkg_dir, pkg_version = resolve_package_metadata()
+    print_info(
+        f"Verifying artifacts for {pkg_name} (dir: {pkg_dir}, version: {pkg_version})"
     )
     wheel_path = _latest_artifact("*.whl", dist)
     sdist_path = _latest_artifact("*.tar.gz", dist)

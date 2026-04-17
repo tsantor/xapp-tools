@@ -11,11 +11,10 @@ from collections import defaultdict
 from pathlib import Path
 
 import click
-from rich.console import Console
 
+from xapp_tools.console import print_error
+from xapp_tools.console import print_success
 from xapp_tools.project_meta import resolve_package_metadata
-
-_err = Console(stderr=True)
 
 
 def build_snapshot(package_name: str) -> dict:
@@ -53,21 +52,21 @@ def main(create: bool) -> None:
     if create:
         contract_file.parent.mkdir(parents=True, exist_ok=True)
         contract_file.write_text(snapshot_text)
-        click.echo(f"Contract updated: {contract_file}")
+        print_success(f"Contract updated: {contract_file}")
     else:
         if not contract_file.exists():
-            _err.print(f"[red]Contract file not found:[/red] {contract_file}")
+            print_error(f"[red]Contract file not found:[/red] {contract_file}")
             sys.exit(1)
         contract_text = contract_file.read_text()
         if snapshot_text != contract_text:
-            _err.print(
+            print_error(
                 "[red]Public API has changed.[/red] "
                 "Run [bold]just api-snapshot[/bold] to update the contract."
             )
-            _err.print(f"\nContract ({contract_file}):\n{contract_text}")
-            _err.print(f"\nCurrent ({output}):\n{snapshot_text}")
+            print_error(f"\nContract ({contract_file}):\n{contract_text}")
+            print_error(f"\nCurrent ({output}):\n{snapshot_text}")
             sys.exit(1)
-        click.echo("Public API contract is up to date.")
+        print_success("Public API contract is up to date.")
 
 
 if __name__ == "__main__":

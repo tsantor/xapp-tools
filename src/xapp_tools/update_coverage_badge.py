@@ -12,6 +12,9 @@ from pathlib import Path
 import click
 from rich.console import Console
 
+from xapp_tools.console import print_error
+from xapp_tools.console import print_info
+from xapp_tools.console import print_success
 from xapp_tools.project_meta import resolve_package_metadata
 
 BADGE_PATTERN = re.compile(
@@ -22,8 +25,6 @@ GREEN_THRESHOLD = 80
 YELLOWGREEN_THRESHOLD = 70
 YELLOW_THRESHOLD = 60
 ORANGE_THRESHOLD = 50
-
-_out = Console()
 
 
 def badge_color(percent: int) -> str:
@@ -109,10 +110,10 @@ def main(coverage_json: str, readme: str) -> None:
         f"--cov={package_dir}",
         "--cov-report=json",
     ]
-    _out.print(f"[cyan]Running:[/cyan] {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    print_info(f"[cyan]Running:[/cyan] {' '.join(cmd)}")
+    result = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510, S603
     if result.returncode != 0:
-        _out.print(f"[red]pytest failed:[/red]\n{result.stdout}\n{result.stderr}")
+        print_error(f"[red]pytest failed:[/red]\n{result.stdout}\n{result.stderr}")
         sys.exit(result.returncode)
 
     percent = parse_coverage_percent(coverage_path)
@@ -120,9 +121,9 @@ def main(coverage_json: str, readme: str) -> None:
     changed = update_readme(readme_path, badge)
 
     if changed:
-        _out.print(f"Updated README coverage badge to [green]{percent}%[/green]")
+        print_success(f"Updated README coverage badge to [green]{percent}%[/green]")
     else:
-        _out.print(
+        print_success(
             f"README coverage badge already up to date at [green]{percent}%[/green]"
         )
 
