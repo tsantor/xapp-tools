@@ -16,12 +16,29 @@ xapp-tools --help
 
 Available commands:
 
-- `api-snapshot` — capture a public API snapshot
-- `check-version-source` — ensure no hardcoded `__version__` in package source
-- `coverage-badge` — update the coverage badge in README
-- `update-deps` — refresh all dependencies to their latest versions via `uv`
-- `verify-dist` — verify wheel and sdist build artifacts
-- `wheel-smoke` — smoke-test an installed wheel
+**`version`** — Version management
+
+- `xapp-tools version show` — print the current version from `pyproject.toml`
+- `xapp-tools version set X.Y.Z` — set an explicit version (strict SemVer)
+- `xapp-tools version bump [patch|minor|major]` — bump the version
+- `xapp-tools version check-source` — ensure no hardcoded `__version__` in source
+
+**`tag`** — Git tag management
+
+- `xapp-tools tag dryrun` — print the tag without creating it
+- `xapp-tools tag create` — create an annotated local git tag
+- `xapp-tools tag push` — push the tag to origin
+
+**`dist`** — Distribution artifacts
+
+- `xapp-tools dist verify` — verify wheel and sdist build artifacts
+- `xapp-tools dist wheel-smoke` — smoke-test the installed wheel in a clean venv
+- `xapp-tools dist api-snapshot` — capture or verify the public API contract
+
+**Top-level**
+
+- `xapp-tools coverage-badge` — update the coverage badge in README
+- `xapp-tools update-deps` — refresh all dependencies to latest versions via `uv`
 
 ## Reuse Policy
 
