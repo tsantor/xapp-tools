@@ -272,6 +272,17 @@ twine-check: dist
 twine-fix:
   uv pip install -U twine pkginfo
 
+# -----------------------------------------------------------------------------
+# X Studios S3 PyPi
+# -----------------------------------------------------------------------------
+
+# Push distro to S3 bucket
+[group('s3')]
+push-to-s3:
+  aws s3 sync --profile={{aws_profile}} --acl public-read ./dist/ s3://{{s3_bucket}}/ \
+    --exclude "*" --include "*.whl"
+  echo "{{package_url}}"
+
 # DO NOT EDIT ABOVE THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING
 # -----------------------------------------------------------------------------
 # Project Specific
