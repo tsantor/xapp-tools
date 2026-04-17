@@ -116,37 +116,37 @@ uv-lock-check:
 # Run tests
 [group('testing')]
 pytest:
-  uv run pytest -vx --cov --cov-report=html
+  uv run pytest -vx --cov={{package_name}} --cov-report=html
 
 # Run tests in verbose mode
 [group('testing')]
 pytest-verbose:
-  uv run pytest -vvs --cov --cov-report=html
+  uv run pytest -vvs --cov={{package_name}} --cov-report=html
 
 # Run tests with coverage
 [group('testing')]
 coverage:
-  uv run pytest -q --cov={{package_name}} --cov-report=term-missing --cov-report=html
+  uv run pytest -q --cov={{package_name}} --cov-report=term --cov-report=html
 
 # Run tests with coverage in verbose mode
 [group('testing')]
 coverage-verbose:
-  uv run pytest -vss --cov={{package_name}} --cov-report=term-missing --cov-report=html
+  uv run pytest -vs --cov={{package_name}} --cov-report=term --cov-report=html
 
 # Run tests with coverage and skip covered
 [group('testing')]
 coverage-skip:
-  uv run pytest -vs --cov={{package_name}} --cov-report=term-missing:skip-covered --cov-report=html
+  uv run pytest -vs --cov={{package_name}} --cov-report=term:skip-covered --cov-report=html
+
+# Run tests with coverage threshold gate
+[group('testing')]
+pytest-cov-gate:
+  uv run pytest -q --cov={{package_name}} --cov-report=term --cov-fail-under={{cov_fail_under}}
 
 # Open coverage report
 [group('testing')]
 open-coverage:
   open htmlcov/index.html
-
-# Run tests with coverage threshold gate
-[group('testing')]
-pytest-cov-gate:
-  uv run pytest -q --cov={{package_name}} --cov-report=term-missing --cov-fail-under={{cov_fail_under}}
 
 # Run tox
 [group('testing')]
