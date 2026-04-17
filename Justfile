@@ -62,7 +62,7 @@ pip-install-editable:
 # Add dev dependencies
 [group('uv')]
 uv-add-dev-dependencies:
-  uv add twine wheel build ruff pipdeptree pre-commit --group dev
+  uv add twine wheel build ruff pre-commit --group dev
 
 # Add test dependencies
 [group('uv')]
@@ -78,11 +78,6 @@ pip-list:
 [group('pip')]
 pip-tree:
   uv pip tree
-
-# Run pipdeptree
-[group('uv')]
-pipdeptree:
-  uv run pipdeptree
 
 # Sync dependencies from lock file
 [group('uv')]

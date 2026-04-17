@@ -29,7 +29,6 @@ xapp-tools = "xapp_tools.cli:cli"
 [dependency-groups]
 dev = [
   "build>=1.0.0",
-  "pipdeptree>=2.35.1",
   "ruff>=0.15.0",
   "twine>=6.2.0",
 ]

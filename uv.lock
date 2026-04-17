@@ -529,18 +529,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pipdeptree"
-version = "2.35.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6b/f0/fafc4fa3c489c15c0f94c4df89a48fb59fdee2428db64e1adaf4cef94863/pipdeptree-2.35.1.tar.gz", hash = "sha256:4bbcffe7d1edead00f5ca64c265b0bf902c919f872637e055924c3bea8c615d1", size = 74370 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/3d/234857571882f2677d5fa2d6e06deaba162fa0b4f350c5e5185aee437669/pipdeptree-2.35.1-py3-none-any.whl", hash = "sha256:9e7ce2533f5c18349c3988f002b6afc1dd503cb7c40826ac83e643da0263590a", size = 48919 },
-]
-
-[[package]]
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -823,7 +811,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
-    { name = "pipdeptree" },
     { name = "ruff" },
     { name = "twine" },
 ]
@@ -841,7 +828,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = ">=1.0.0" },
-    { name = "pipdeptree", specifier = ">=2.35.1" },
     { name = "ruff", specifier = ">=0.15.0" },
     { name = "twine", specifier = ">=6.2.0" },
 ]
