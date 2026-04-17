@@ -13,6 +13,8 @@ from pathlib import Path
 import click
 from rich.console import Console
 
+from xapp_tools.project_meta import resolve_package_metadata
+
 _err = Console(stderr=True)
 
 
@@ -31,33 +33,28 @@ def build_snapshot(package_name: str) -> dict:
 
 
 @click.command("api-snapshot")
-@click.option("--package", required=True, help="Top-level package name to inspect.")
 @click.option(
-    "--output",
-    required=True,
-    type=click.Path(path_type=Path),
-    help="Path to write the generated snapshot.",
-)
-@click.option(
-    "--contract-file",
-    required=True,
-    type=click.Path(path_type=Path),
-    help="Path to the committed contract file.",
-)
-@click.option(
-    "--check",
+    "--create",
     is_flag=True,
-    help="Verify snapshot matches contract instead of updating it.",
+    help="Create the public API contract instead of verifying it.",
 )
-def main(package: str, output: Path, contract_file: Path, check: bool) -> None:
-    """Generate or verify a package's public API contract."""
+def main(create: bool) -> None:
+    """Generate or verify the package's public API contract."""
+    _, package, _ = resolve_package_metadata()
     snapshot = build_snapshot(package)
     snapshot_text = json.dumps(snapshot, indent=2) + "\n"
 
+    output = Path("api/public_api.json")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(snapshot_text)
 
-    if check:
+    contract_file = Path("api/public_api.contract.json")
+
+    if create:
+        contract_file.parent.mkdir(parents=True, exist_ok=True)
+        contract_file.write_text(snapshot_text)
+        click.echo(f"Contract updated: {contract_file}")
+    else:
         if not contract_file.exists():
             _err.print(f"[red]Contract file not found:[/red] {contract_file}")
             sys.exit(1)
@@ -71,10 +68,6 @@ def main(package: str, output: Path, contract_file: Path, check: bool) -> None:
             _err.print(f"\nCurrent ({output}):\n{snapshot_text}")
             sys.exit(1)
         click.echo("Public API contract is up to date.")
-    else:
-        contract_file.parent.mkdir(parents=True, exist_ok=True)
-        contract_file.write_text(snapshot_text)
-        click.echo(f"Contract updated: {contract_file}")
 
 
 if __name__ == "__main__":

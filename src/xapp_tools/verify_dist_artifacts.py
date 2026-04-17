@@ -13,10 +13,7 @@ from pathlib import Path
 import click
 from rich.console import Console
 
-try:
-    from xapp_tools.project_meta import resolve_package_metadata
-except ModuleNotFoundError:
-    from project_meta import resolve_package_metadata  # type: ignore[no-redef]
+from xapp_tools.project_meta import resolve_package_metadata
 
 _err = Console(stderr=True)
 

@@ -107,7 +107,7 @@ def main(coverage_json: str, readme: str) -> None:
         "pytest",
         "-q",
         f"--cov={package_dir}",
-        f"--cov-report=json:{coverage_path}",
+        "--cov-report=json",
     ]
     _out.print(f"[cyan]Running:[/cyan] {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)

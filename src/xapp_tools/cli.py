@@ -1,5 +1,3 @@
-"""xapp-tools — dev CLI for xapp-core project scripts."""
-
 import click
 
 from xapp_tools.check_version_source import main as check_version_source_cmd
