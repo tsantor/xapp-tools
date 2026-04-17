@@ -1,4 +1,4 @@
-"""Create and push git version tags derived from pyproject.toml."""
+"""Git tag management commands derived from pyproject.toml."""
 
 from __future__ import annotations
 
@@ -41,16 +41,42 @@ def _tag_exists(tag: str) -> bool:
     return result.returncode == 0
 
 
-def _require_clean_tree(action: str) -> None:
+def _resolve_tag() -> str:
+    try:
+        tag = _get_tag(Path("pyproject.toml"))
+    except (KeyError, FileNotFoundError) as e:
+        print_error(str(e))
+        raise SystemExit(1) from e
+    if not _TAG_RE.match(tag):
+        print_error(f"Invalid tag format: {tag}")
+        raise SystemExit(1)
+    return tag
+
+
+def _require_clean_tree(verb: str) -> None:
     if not _is_tree_clean():
-        noun = "tagging" if action == "create" else "pushing tags"
         print_error(
-            f"Working tree is not clean. Commit or stash changes before {noun}."
+            f"Working tree is not clean. Commit or stash changes before {verb}."
         )
         raise SystemExit(1)
 
 
-def _create_tag(tag: str) -> None:
+@click.command("dryrun")
+def dryrun() -> None:
+    """Print the git tag for the current version without creating it."""
+    try:
+        tag = _get_tag(Path("pyproject.toml"))
+    except (KeyError, FileNotFoundError) as e:
+        print_error(str(e))
+        raise SystemExit(1) from e
+    print_info(tag)
+
+
+@click.command("create")
+def create() -> None:
+    """Create a local annotated git tag for the current version."""
+    tag = _resolve_tag()
+    _require_clean_tree("tagging")
     if _tag_exists(tag):
         print_error(f"Tag already exists: {tag}")
         raise SystemExit(1)
@@ -64,11 +90,13 @@ def _create_tag(tag: str) -> None:
     print_success(f"Created tag {tag}")
 
 
-def _push_tag(tag: str) -> None:
+@click.command("push")
+def push() -> None:
+    """Push the current version tag to origin."""
+    tag = _resolve_tag()
+    _require_clean_tree("pushing tags")
     if not _tag_exists(tag):
-        print_error(
-            f"Tag does not exist locally: {tag}. Run 'version-tag create' first."
-        )
+        print_error(f"Tag does not exist locally: {tag}. Run 'tag create' first.")
         raise SystemExit(1)
     result = subprocess.run(  # noqa: S603
         ["git", "push", "origin", tag],  # noqa: S607
@@ -78,36 +106,3 @@ def _push_tag(tag: str) -> None:
         print_error(f"Failed to push tag: {tag}")
         raise SystemExit(1)
     print_success(f"Pushed tag {tag}")
-
-
-@click.command("version-tag")
-@click.argument("action", type=click.Choice(["dryrun", "create", "push"]))
-def main(action: str) -> None:
-    """Manage git version tags derived from pyproject.toml.
-
-    ACTION is one of: dryrun (print tag), create (annotated tag), push (push to origin).
-    """
-    try:
-        tag = _get_tag(Path("pyproject.toml"))
-    except (KeyError, FileNotFoundError) as e:
-        print_error(str(e))
-        raise SystemExit(1) from e
-
-    if action == "dryrun":
-        print_info(tag)
-        return
-
-    if not _TAG_RE.match(tag):
-        print_error(f"Invalid tag format: {tag}")
-        raise SystemExit(1)
-
-    _require_clean_tree(action)
-
-    if action == "create":
-        _create_tag(tag)
-    else:
-        _push_tag(tag)
-
-
-if __name__ == "__main__":
-    main()

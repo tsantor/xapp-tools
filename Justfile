@@ -270,27 +270,27 @@ tree-root:
 # Show current package version
 [group('versioning')]
 version-show:
-  @uv run xapp-tools version-show
+  @uv run xapp-tools version show
 
 # Set explicit version (strict SemVer: X.Y.Z)
 [group('versioning')]
 version-set new_version:
-  @uv run xapp-tools version-set {{new_version}}
+  @uv run xapp-tools version set {{new_version}}
 
 # Bump patch version (X.Y.Z -> X.Y.Z+1)
 [group('versioning')]
 version-bump-patch:
-  @uv run xapp-tools version-bump patch
+  @uv run xapp-tools version bump patch
 
 # Bump minor version (X.Y.Z -> X.Y+1.0)
 [group('versioning')]
 version-bump-minor:
-  @uv run xapp-tools version-bump minor
+  @uv run xapp-tools version bump minor
 
 # Bump major version (X.Y.Z -> X+1.0.0)
 [group('versioning')]
 version-bump-major:
-  @uv run xapp-tools version-bump major
+  @uv run xapp-tools version bump major
 
 # Validate a bumped version with full quality gates
 [group('versioning')]
@@ -299,17 +299,17 @@ version-verify: ci
 # Print suggested git tag for current version
 [group('versioning')]
 version-tag-dryrun:
-  @uv run xapp-tools version-tag dryrun
+  @uv run xapp-tools tag dryrun
 
 # Create local annotated git tag for current version
 [group('versioning')]
 version-tag:
-  @uv run xapp-tools version-tag create
+  @uv run xapp-tools tag create
 
 # Push current version tag to origin
 [group('versioning')]
 version-tag-push:
-  @uv run xapp-tools version-tag push
+  @uv run xapp-tools tag push
 
 # ----------------------------------------------------------------------------
 # Deploy
