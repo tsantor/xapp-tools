@@ -2,6 +2,7 @@
 name = "xapp-tools"
 description = "A collection of tools for working with xapp-core packages."
 version = "0.4.0"
+# dynamic = ["readme"]
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.11"
 authors = [

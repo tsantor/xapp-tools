@@ -62,7 +62,7 @@ Not allowed examples:
 - Project feature commands
 - One-off scripts tightly coupled to a specific app's runtime behavior
 
-##
+## Hatch plugin
 
 This packages offers a `hatch` hook that combines the `README` with the `HISTORY`.
 
@@ -75,4 +75,4 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata.hooks.combined-readme]
 ```
 
-Or simply use ``hatch-fancy-pypi-readme`.
+Or simply use `hatch-fancy-pypi-readme`.
