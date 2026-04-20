@@ -38,8 +38,8 @@ test = [
   "pytest-mock>=3.0.0",
 ]
 
-[project.entry-points."hatch.metadata.hook"]
-combined-readme = "xapp_tools.hatch.readme_hook:CombinedReadmeMetadataHook"
+[project.entry-points.hatch]
+combined-readme = "xapp_tools.hatch.readme_hook"
 
 [project.urls]
 # Homepage = "https://xstudios.com"

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
+from hatchling.plugin import hookimpl
 
 
 class CombinedReadmeMetadataHook(MetadataHookInterface):
@@ -14,3 +15,8 @@ class CombinedReadmeMetadataHook(MetadataHookInterface):
             "content-type": "text/markdown",
             "text": readme + "\n\n---\n\n" + history,
         }
+
+
+@hookimpl
+def hatch_register_metadata_hook() -> type[MetadataHookInterface]:
+    return CombinedReadmeMetadataHook

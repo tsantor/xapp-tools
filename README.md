@@ -61,3 +61,18 @@ Not allowed examples:
 - Application/domain business logic
 - Project feature commands
 - One-off scripts tightly coupled to a specific app's runtime behavior
+
+##
+
+This packages offers a `hatch` hook that combines the `README` with the `HISTORY`.
+
+In the package which implements `xapp-tools` add the follwoing the `pyproject.toml`:
+
+```toml
+requires = ["hatchling", "xapp-tools"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata.hooks.combined-readme]
+```
+
+Or simply use ``hatch-fancy-pypi-readme`.
