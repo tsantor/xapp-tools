@@ -60,6 +60,22 @@ def _extract_import_sources(source: str, package_name: str) -> dict[str, str]:
     return sources
 
 
+def _diff_snapshots(contract: dict, current: dict) -> list[str]:
+    lines = []
+    contract_mods = contract.get("modules", {})
+    current_mods = current.get("modules", {})
+    for mod in sorted(set(contract_mods) | set(current_mods)):
+        removed = sorted(
+            set(contract_mods.get(mod, [])) - set(current_mods.get(mod, []))
+        )
+        added = sorted(set(current_mods.get(mod, [])) - set(contract_mods.get(mod, [])))
+        if removed:
+            lines.append(f"  {mod}: removed {', '.join(removed)}")
+        if added:
+            lines.append(f"  {mod}: added {', '.join(added)}")
+    return lines
+
+
 def build_snapshot(init_path: Path, package_name: str) -> dict:
     init_content = init_path.read_text(encoding="utf-8")
     all_names = sorted(_extract_all(init_content))
@@ -104,12 +120,13 @@ def main(create: bool) -> None:
             sys.exit(1)
         contract_text = contract_file.read_text()
         if snapshot_text != contract_text:
+            diff = _diff_snapshots(json.loads(contract_text), snapshot)
+            print_error("Public API has changed:")
+            for line in diff:
+                print_error(line)
             print_error(
-                "Public API has changed. "
                 "Run [bold]xapp-tools dist api-snapshot --create[/bold] to update the contract."
             )
-            print_error(f"\nContract ({contract_file}):\n{contract_text}")
-            print_error(f"\nCurrent ({output}):\n{snapshot_text}")
             sys.exit(1)
         print_success("Public API contract is up to date.")
 

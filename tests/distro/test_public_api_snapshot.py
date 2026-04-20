@@ -4,6 +4,7 @@ from pathlib import Path
 from click.testing import CliRunner
 
 from xapp_tools.cli import cli
+from xapp_tools.distro.public_api_snapshot import _diff_snapshots
 from xapp_tools.distro.public_api_snapshot import _extract_all
 from xapp_tools.distro.public_api_snapshot import _extract_import_sources
 from xapp_tools.distro.public_api_snapshot import build_snapshot
@@ -24,6 +25,34 @@ def _write_init(src_dir: Path, package_name: str, init_src: str) -> Path:
     init_path = pkg_dir / "__init__.py"
     init_path.write_text(init_src, encoding="utf-8")
     return init_path
+
+
+# --- _diff_snapshots ---
+
+
+def test_diff_snapshots_removed():
+    contract = {"modules": {"pkg": ["foo", "bar"]}}
+    current = {"modules": {"pkg": ["foo"]}}
+    assert _diff_snapshots(contract, current) == ["  pkg: removed bar"]
+
+
+def test_diff_snapshots_added():
+    contract = {"modules": {"pkg": ["foo"]}}
+    current = {"modules": {"pkg": ["foo", "bar"]}}
+    assert _diff_snapshots(contract, current) == ["  pkg: added bar"]
+
+
+def test_diff_snapshots_removed_module():
+    contract = {"modules": {"pkg": ["foo"], "pkg.sub": ["foo"]}}
+    current = {"modules": {"pkg": []}}
+    lines = _diff_snapshots(contract, current)
+    assert "  pkg: removed foo" in lines
+    assert "  pkg.sub: removed foo" in lines
+
+
+def test_diff_snapshots_no_change():
+    snap = {"modules": {"pkg": ["foo", "bar"]}}
+    assert _diff_snapshots(snap, snap) == []
 
 
 # --- _extract_all ---
@@ -177,3 +206,5 @@ def test_api_snapshot_verify_fails_on_removed_export(tmp_path, monkeypatch):
 
     assert result.exit_code == 1
     assert "Public API has changed" in result.output
+    assert "mypkg: removed helper" in result.output
+    assert "mypkg.core: removed helper" in result.output
