@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.1 (2026-04-20)
+
+- Fixed the `hatch` combined-readme plugin hook.
+
 ## 0.3.0 (2026-04-17)
 
 - Added `version` subgroup: `show`, `set`, `bump`, `check-source`.
