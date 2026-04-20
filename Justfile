@@ -318,7 +318,12 @@ version-tag-push:
 # Build source and wheel package
 [group('deploy')]
 dist: clean
-  uv run python3 -m build
+  uv run hatch build
+
+# Show package metadata
+[group('deploy')]
+metadata:
+  uv run hatch project metadata
 
 # Run full release quality gates
 [group('deploy')]

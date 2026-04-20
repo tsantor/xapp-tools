@@ -129,3 +129,33 @@ def test_verify_dist_artifacts_fails_for_invalid_contract(
 
     assert result.exit_code == 1
     assert "Invalid symbol list for contract module 'xapp_core.app'" in result.output
+
+
+def test_verify_dist_artifacts_passes_with_package_level_contract(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Contract keyed on the package name resolves to __init__.py inside the wheel."""
+    monkeypatch.chdir(tmp_path)
+    _setup_project(tmp_path)
+
+    # Wheel has xapp_core/__init__.py with a known symbol
+    wheel_path = tmp_path / "dist" / "xapp_core-9.9.9-py3-none-any.whl"
+    with zipfile.ZipFile(wheel_path, "w") as wheel:
+        wheel.writestr("xapp_core/__init__.py", "def public_func(): pass\n")
+        wheel.writestr(
+            "xapp_core-9.9.9.dist-info/METADATA",
+            "Metadata-Version: 2.1\nName: xapp-core\nVersion: 9.9.9\n",
+        )
+    _write_sdist(tmp_path / "dist")
+
+    # Contract uses the package name (not a submodule) as the key
+    contract = tmp_path / "api" / "public_api.contract.json"
+    contract.parent.mkdir(parents=True, exist_ok=True)
+    contract.write_text(
+        json.dumps({"modules": {"xapp_core": ["public_func"]}}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    result = _run_verify()
+
+    assert result.exit_code == 0

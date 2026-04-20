@@ -65,8 +65,12 @@ def _verify_contract(wheel_path: Path, contract_file: Path) -> None:
     with zipfile.ZipFile(wheel_path, "r") as wheel:
         for module, symbols in modules.items():
             file_path = module.replace(".", "/") + ".py"
+            init_path = module.replace(".", "/") + "/__init__.py"
             try:
-                content = wheel.read(file_path).decode("utf-8")
+                try:
+                    content = wheel.read(file_path).decode("utf-8")
+                except KeyError:
+                    content = wheel.read(init_path).decode("utf-8")
             except KeyError:
                 failures[module] = symbols
                 continue
