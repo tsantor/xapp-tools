@@ -248,7 +248,7 @@ tree:
 # Show full directory tree
 [group('misc')]
 tree-root:
-    tree -I '.claude|.tmp|.coverage|htmlcov|dist|build|.eggs|*.egg-info|__pycache__|.pytest_cache|.ruff_cache|.tox|.vscode|node_modules|*.csv'
+    tree --dirsfirst -I '.claude|.tmp|.coverage|htmlcov|dist|build|.eggs|*.egg-info|__pycache__|.pytest_cache|.ruff_cache|.tox|.vscode|node_modules|*.csv'
 
 # -----------------------------------------------------------------------------
 # Versioning
