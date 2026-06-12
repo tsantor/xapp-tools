@@ -214,8 +214,10 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.uv.sources]
-xapp-core = { url = "https://xstudios-pypi.s3.amazonaws.com/xapp_core-1.0.2-py3-none-any.whl" }
+[[tool.uv.index]]
+name = "xstudios-pypi"
+url = "http://xstudios-pypi.s3-website-us-east-1.amazonaws.com/"
+extra = true
 
 [tool.ruff.lint.isort]
 force-single-line = true
