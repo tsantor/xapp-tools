@@ -1,13 +1,13 @@
 set shell := ["sh", "-cu"]
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
-# Format all Justfiles in the project
-format-me:
-    just --fmt --unstable
-
 # List all available recipes
 default:
     @just --list
+
+# Format all Justfiles in the project
+format-me:
+    just --fmt --unstable
 
 # -----------------------------------------------------------------------------
 # Variables
@@ -49,12 +49,12 @@ pip-install-editable:
 # Add dev dependencies
 [group('uv')]
 uv-add-dev-dependencies:
-    uv add twine wheel build ruff pre-commit --group dev
+    uv add twine hatch xapp-tools ruff pre-commit --group dev
 
 # Add test dependencies
 [group('uv')]
 uv-add-test-dependencies:
-    uv add pytest pytest-cov pytest-mock pytest-asyncio coverage --group test
+    uv add pytest-cov pytest-mock pytest-asyncio coverage --group test
 
 # Run pip list
 [group('uv')]
@@ -248,57 +248,9 @@ tree:
 # Show full directory tree
 [group('misc')]
 tree-root:
-    tree --dirsfirst -I '.claude|.tmp|.coverage|htmlcov|dist|build|.eggs|*.egg-info|__pycache__|.pytest_cache|.ruff_cache|.tox|.vscode|node_modules|*.csv'
+    tree --dirsfirst -I '.claude|.tmp|.coverage|htmlcov|dist|build|.eggs|*.egg-info|__pycache__|.pytest_cache|.ruff_cache|.tox|.vscode|node_modules'
 
 # -----------------------------------------------------------------------------
-# Versioning
-# -----------------------------------------------------------------------------
-
-# Show current package version
-[group('versioning')]
-version-show:
-    @uv run xapp-tools version show
-
-# Set explicit version (strict SemVer: X.Y.Z)
-[group('versioning')]
-version-set new_version:
-    @uv run xapp-tools version set {{ new_version }}
-
-# Bump patch version (X.Y.Z -> X.Y.Z+1)
-[group('versioning')]
-version-bump-patch:
-    @uv run xapp-tools version bump patch
-
-# Bump minor version (X.Y.Z -> X.Y+1.0)
-[group('versioning')]
-version-bump-minor:
-    @uv run xapp-tools version bump minor
-
-# Bump major version (X.Y.Z -> X+1.0.0)
-[group('versioning')]
-version-bump-major:
-    @uv run xapp-tools version bump major
-
-# Validate a bumped version with full quality gates
-[group('versioning')]
-version-verify: ci
-
-# Print suggested git tag for current version
-[group('versioning')]
-version-tag-dryrun:
-    @uv run xapp-tools tag dryrun
-
-# Create local annotated git tag for current version
-[group('versioning')]
-version-tag:
-    @uv run xapp-tools tag create
-
-# Push current version tag to origin
-[group('versioning')]
-version-tag-push:
-    @uv run xapp-tools tag push
-
-# ----------------------------------------------------------------------------
 # Deploy
 # -----------------------------------------------------------------------------
 
@@ -345,7 +297,11 @@ twine-fix:
 deploy: dist
     pypi-sync dist/*.whl
 
-# DO NOT EDIT ABOVE THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING
+# DO NOT EDIT ABOVE THIS LINE - auto-generated from template
 # -----------------------------------------------------------------------------
 # Project Specific
 # -----------------------------------------------------------------------------
+
+[group('uv')]
+uv-tool-install:
+    uv tool install --force --reinstall .
